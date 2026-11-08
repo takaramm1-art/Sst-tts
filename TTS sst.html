@@ -1,0 +1,768 @@
+```html
+<!DOCTYPE html>
+<html lang="my" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>မြန်မာ အသံပြောင်း စနစ် (Myanmar Long-Text TTS Studio)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Padauk', 'Plus Jakarta Sans', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(30, 41, 59, 0.5);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.5);
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.8);
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+          <i class="fa-solid font-bold fa-waveform text-white text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-white tracking-wide flex items-center gap-2">
+            မြန်မာ TTS & Recap Studio 
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Unlimited</span>
+          </h1>
+          <p class="text-xs text-slate-400">Movie Recap ဇာတ်လမ်းပြော စာသား ရေးသားစနစ်နှင့် မြန်မာ TTS အသံပြောင်းစနစ်</p>
+        </div>
+      </div>
+      
+      <!-- Quick Info Badges -->
+      <div class="hidden sm:flex items-center space-x-2 text-xs text-slate-400">
+        <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/50">
+          <i class="fa-solid fa-clapperboard text-purple-400"></i> AI Movie Recapper
+        </span>
+        <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/50">
+          <i class="fa-solid fa-microchip text-indigo-400"></i> Gemini Audio Engine
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left Controls & Editor (8 Cols) -->
+    <section class="lg:col-span-8 flex flex-col space-y-4">
+
+      <!-- NEW: Movie Recap AI Script Writer Feature Card -->
+      <div class="bg-gradient-to-r from-purple-950/40 via-slate-900/80 to-indigo-950/40 border border-purple-500/30 rounded-2xl p-4 shadow-xl backdrop-blur-sm">
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-sm font-bold text-purple-300 flex items-center gap-2">
+            <i class="fa-solid fa-film text-purple-400"></i>
+            Video ထည့်သွင်း၍ Movie Recap ရေးသားပေးမည့် AI Generator
+          </label>
+          <span class="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full font-medium">Video-to-Recap Mode</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-3">သင့် Video ဖိုင်ကို Upload တင်ပါ သို့မဟုတ် ဇာတ်လမ်း အကြောင်းအရာ ရိုက်ထည့်ပါ၊ AI မှ Video ကို ကြည့်၍ မြန်မာလို သဘာဝကျသော Movie Recap စခရင်ပရစ် ရေးသားပေးပါမည်။</p>
+        
+        <div class="flex flex-col gap-3">
+          <!-- Video File Upload Input Container -->
+          <div class="flex flex-col sm:flex-row items-center gap-2">
+            <label for="video-file-input" class="w-full sm:w-auto flex-1 cursor-pointer bg-slate-950 hover:bg-slate-800/80 border border-dashed border-purple-500/40 hover:border-purple-400 rounded-xl px-3.5 py-2.5 text-xs text-slate-300 flex items-center justify-between transition-colors">
+              <span class="flex items-center gap-2 overflow-hidden">
+                <i class="fa-solid fa-file-video text-purple-400 text-sm shrink-0"></i>
+                <span id="video-file-label" class="truncate">Video ဖိုင်ရွေးချယ်ပါ (.mp4, .webm, .mov)...</span>
+              </span>
+              <span class="bg-purple-600/30 text-purple-300 px-2 py-0.5 rounded text-[10px] border border-purple-500/40 shrink-0">Browse</span>
+            </label>
+            <input id="video-file-input" type="file" accept="video/*" class="hidden" />
+
+            <button id="generate-recap-btn" 
+              class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition-all flex items-center justify-center space-x-1.5 shrink-0 shadow-lg shadow-purple-600/20">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>Recap စာမူ ရေးပေးပါ</span>
+            </button>
+          </div>
+
+          <!-- Prompt Note / Context (Optional) -->
+          <input id="recap-prompt-input" type="text" 
+            placeholder="ဖြည့်စွက်ချက် (ဥပမာ- ဇာတ်လမ်းအမည် သို့မဟုတ် သီးသန့် အလေးပေးစေချင်သော အချက်များ)..." 
+            class="w-full bg-slate-950/60 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-purple-500" />
+        </div>
+      </div>
+
+      <!-- Text Input Area Card -->
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col flex-1 relative overflow-hidden backdrop-blur-sm">
+        <div class="flex items-center justify-between mb-3">
+          <label for="text-input" class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square text-indigo-400"></i>
+            ဖတ်ပြစေချင်သော မြန်မာစာများ (သို့မဟုတ် Recap Script):
+          </label>
+          <div class="flex items-center space-x-2 text-xs text-slate-400">
+            <button id="copy-btn" class="hover:text-indigo-400 transition-colors flex items-center gap-1 bg-slate-800 px-2.5 py-1 rounded-md text-slate-300 border border-slate-700">
+              <i class="fa-solid fa-copy"></i> <span>စာကူးယူမည်</span>
+            </button>
+            <span id="char-count" class="font-mono bg-slate-800 px-2.5 py-1 rounded-md text-indigo-300">0 စာလုံး</span>
+            <button id="clear-btn" class="hover:text-rose-400 transition-colors flex items-center gap-1">
+              <i class="fa-solid fa-trash-can"></i> ရှင်းထုတ်ပါ
+            </button>
+          </div>
+        </div>
+
+        <textarea id="text-input" rows="10" 
+          placeholder="ဒီနေရာမှာ သင်ဖတ်ပြစေချင်တဲ့ မြန်မာစာပိုဒ်တွေကို စာလုံးရေ အကန့်အသတ်မရှိ ထည့်သွင်းနိုင်ပါတယ်။ စာပိုဒ်ရှည်ကြီးများကိုလည်း စနစ်က အလိုအလျောက် ပိုင်းခြားပြီး ချောမွေ့စွာ ဖတ်ပြပေးသွားပါမည်..."
+          class="w-full flex-1 bg-slate-950/80 border border-slate-800 rounded-xl p-4 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 text-base leading-relaxed resize-none custom-scrollbar transition-all"></textarea>
+
+        <!-- Dynamic Action Bar -->
+        <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-800/80">
+          <div class="flex items-center space-x-2 text-xs text-slate-400 w-full sm:w-auto">
+            <i class="fa-solid fa-circle-info text-slate-500"></i>
+            <span>စာလုံးရေ 2000+ စာပိုဒ်ရှည်ကြီးများကို High-Speed Batch Chunking ဖြင့် အမြန်ဆုံး တွဲစပ်ပေးပါသည်။</span>
+          </div>
+
+          <div class="flex items-center space-x-3 w-full sm:w-auto justify-end">
+            <button id="generate-btn" 
+              class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold text-sm shadow-lg shadow-indigo-500/25 transition-all duration-200 flex items-center justify-center space-x-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>အသံဖိုင် ဖန်တီးပါ</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast / Notification Alert Message Box (No browser alert) -->
+      <div id="toast-message" class="hidden rounded-xl p-4 bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-exclamation text-rose-400 text-base"></i>
+          <span id="toast-text"></span>
+        </div>
+        <button onclick="document.getElementById('toast-message').classList.add('hidden')" class="text-rose-400 hover:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Right Settings & Audio Player Panel (4 Cols) -->
+    <section class="lg:col-span-4 flex flex-col space-y-4">
+
+      <!-- Speaker / Voice Selection Card -->
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 shadow-xl backdrop-blur-sm">
+        <h2 class="text-sm font-bold text-slate-200 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-user-gear text-indigo-400"></i>
+          အသံနှင့် စတိုင် ရွေးချယ်ရန်
+        </h2>
+
+        <div class="space-y-4">
+          <!-- Voice Selector -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-2">အသံသရုပ်ဆောင် (Voice Speaker)</label>
+            <div class="grid grid-cols-1 gap-2" id="voice-options">
+              
+              <!-- Nilar (Warm/Gentle) -->
+              <label class="relative flex items-center p-3 rounded-xl border border-slate-700/60 bg-slate-800/40 hover:bg-slate-800/80 cursor-pointer transition-all has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-950/30">
+                <input type="radio" name="voice" value="Vindemiatrix" checked class="hidden peer" data-name="နီလာ (Nilar)" data-desc="ပျော့ပျောင်း အေးဆေးသော အမျိုးသမီးသံ">
+                <div class="w-8 h-8 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center mr-3 font-bold text-sm">နီ</div>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-slate-200">နီလာ (Nilar)</div>
+                  <div class="text-xs text-slate-400">ပျော့ပျောင်း အေးဆေးသော အမျိုးသမီးသံ</div>
+                </div>
+                <i class="fa-solid fa-circle-check text-indigo-400 text-lg opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+              </label>
+
+              <!-- Thiha (Firm/Clear) -->
+              <label class="relative flex items-center p-3 rounded-xl border border-slate-700/60 bg-slate-800/40 hover:bg-slate-800/80 cursor-pointer transition-all has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-950/30">
+                <input type="radio" name="voice" value="Kore" class="hidden peer" data-name="သီဟ (Thiha)" data-desc="ပြတ်သား လေးနက်သော အမျိုးသားသံ">
+                <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center mr-3 font-bold text-sm">သီ</div>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-slate-200">သီဟ (Thiha)</div>
+                  <div class="text-xs text-slate-400">ပြတ်သား လေးနက်သော အမျိုးသားသံ</div>
+                </div>
+                <i class="fa-solid fa-circle-check text-indigo-400 text-lg opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+              </label>
+
+              <!-- Aung Thu (Upbeat / Youthful) -->
+              <label class="relative flex items-center p-3 rounded-xl border border-slate-700/60 bg-slate-800/40 hover:bg-slate-800/80 cursor-pointer transition-all has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-950/30">
+                <input type="radio" name="voice" value="Puck" class="hidden peer" data-name="အောင်သူ (Aung Thu)" data-desc="တက်ကြွ ရွှင်လန်းသော အမျိုးသားသံ">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center mr-3 font-bold text-sm">အောင်</div>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-slate-200">အောင်သူ (Aung Thu)</div>
+                  <div class="text-xs text-slate-400">တက်ကြွ ရွှင်လန်းသော အမျိုးသားသံ</div>
+                </div>
+                <i class="fa-solid fa-circle-check text-indigo-400 text-lg opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+              </label>
+
+              <!-- May Thu (Breezy / Bright) -->
+              <label class="relative flex items-center p-3 rounded-xl border border-slate-700/60 bg-slate-800/40 hover:bg-slate-800/80 cursor-pointer transition-all has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-950/30">
+                <input type="radio" name="voice" value="Aoede" class="hidden peer" data-name="မေသူ (May Thu)" data-desc="ကြည်လင် သာယာသော အမျိုးသမီးသံ">
+                <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center mr-3 font-bold text-sm">မေ</div>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-slate-200">မေသူ (May Thu)</div>
+                  <div class="text-xs text-slate-400">ကြည်လင် သာယာသော အမျိုးသမီးသံ</div>
+                </div>
+                <i class="fa-solid fa-circle-check text-indigo-400 text-lg opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+              </label>
+
+              <!-- Kyaw Swar (Informative / Deep) -->
+              <label class="relative flex items-center p-3 rounded-xl border border-slate-700/60 bg-slate-800/40 hover:bg-slate-800/80 cursor-pointer transition-all has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-950/30">
+                <input type="radio" name="voice" value="Charon" class="hidden peer" data-name="ကျော်စွာ (Kyaw Swar)" data-desc="သတင်း သို့မဟုတ် စာဖတ်သံ လေးနက်သူ">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center mr-3 font-bold text-sm">ကျော်</div>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-slate-200">ကျော်စွာ (Kyaw Swar)</div>
+                  <div class="text-xs text-slate-400">သတင်း/စာဖတ်ရန် သင့်တော်သော အသံ</div>
+                </div>
+                <i class="fa-solid fa-circle-check text-indigo-400 text-lg opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+              </label>
+
+              <!-- Ayar (Gentle Narrator) -->
+              <label class="relative flex items-center p-3 rounded-xl border border-slate-700/60 bg-slate-800/40 hover:bg-slate-800/80 cursor-pointer transition-all has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-950/30">
+                <input type="radio" name="voice" value="Zephyr" class="hidden peer" data-name="ဧရာ (Ayar)" data-desc="ပုံပြင် ဖတ်ပြရန် သင့်တော်သော အသံ">
+                <div class="w-8 h-8 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center mr-3 font-bold text-sm">ဧ</div>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-slate-200">ဧရာ (Ayar)</div>
+                  <div class="text-xs text-slate-400">ပုံပြင်နှင့် အေးဆေးသော ပြောစကားများ</div>
+                </div>
+                <i class="fa-solid fa-circle-check text-indigo-400 text-lg opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+              </label>
+
+            </div>
+          </div>
+
+          <!-- Tone Options -->
+          <div>
+            <label for="reading-tone" class="block text-xs font-semibold text-slate-400 mb-2">ဖတ်ကြားမည့် ဟန်ပန် (Reading Style)</label>
+            <select id="reading-tone" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+              <option value="natural and fluent">သဘာဝကျကျနှင့် ချောမွေ့စွာ</option>
+              <option value="clear news anchor style">သတင်းကြေညာသူကဲ့သို့ ပြတ်ပြတ်သားသား</option>
+              <option value="soft storytelling tone">ပုံပြင်ပြောပြသည့် ပျော့ပျောင်းသောအသံ</option>
+              <option value="cheerful and enthusiastic">တက်ကြွရွှင်လန်းသော လေသံ</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Output / Progress & Audio Player Card -->
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 shadow-xl backdrop-blur-sm flex-1 flex flex-col justify-between">
+        <div>
+          <h2 class="text-sm font-bold text-slate-200 mb-3 flex items-center justify-between">
+            <span class="flex items-center gap-2">
+              <i class="fa-solid fa-headphones text-indigo-400"></i>
+              အသံဖိုင် ရလဒ် (Audio Output)
+            </span>
+            <span id="status-badge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">အဆင်သင့်</span>
+          </h2>
+
+          <!-- Progress Bar & Status Text -->
+          <div id="progress-container" class="hidden space-y-2 mb-4 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="flex justify-between text-xs text-slate-400">
+              <span id="progress-status">လုပ်ဆောင်နေပါသည်...</span>
+              <span id="progress-percent" class="font-mono text-indigo-400">0%</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full w-0 transition-all duration-300"></div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div id="empty-audio-state" class="text-center py-8 px-4 border border-dashed border-slate-800 rounded-xl">
+            <div class="w-12 h-12 rounded-full bg-slate-800/50 text-slate-500 flex items-center justify-center mx-auto mb-2">
+              <i class="fa-solid fa-music text-xl"></i>
+            </div>
+            <p class="text-xs text-slate-400">အသံဖိုင် ဖန်တီးပါ ခလုတ်ကို နှိပ်ပါက ဒီနေရာတွင် နားဆင်နိုင်ပါမည်။</p>
+          </div>
+
+          <!-- Audio Player UI (Hidden initially) -->
+          <div id="audio-player-wrapper" class="hidden space-y-4">
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col items-center">
+              <div class="w-12 h-12 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-2 animate-pulse">
+                <i class="fa-solid fa-volume-high text-xl"></i>
+              </div>
+              <div id="selected-voice-display" class="text-xs font-semibold text-slate-200">နီလာ (Nilar)</div>
+              <div id="audio-duration-display" class="text-[11px] text-slate-500 mt-0.5">အသံဖိုင်အဆင်သင့်ဖြစ်ပါပြီ</div>
+              
+              <!-- Native HTML Audio -->
+              <audio id="main-audio-player" controls class="w-full mt-3 h-10 accent-indigo-500 focus:outline-none"></audio>
+            </div>
+
+            <!-- Download Button -->
+            <a id="download-audio-btn" download="myanmar_tts.wav" 
+              class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center space-x-2 transition-colors cursor-pointer">
+              <i class="fa-solid fa-download text-indigo-400"></i>
+              <span>.WAV အသံဖိုင် ဒေါင်းလုဒ်ဆွဲမည်</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-500 text-center">
+          Powered by Gemini 2.5 TTS Technology
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    // System Constants & Variables
+    const API_MODEL = "gemini-2.5-flash-preview-tts";
+    const GEMINI_TEXT_MODEL = "gemini-3-flash-preview";
+    const API_KEY = ""; 
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${API_MODEL}:generateContent?key=${API_KEY}`;
+    const TEXT_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_TEXT_MODEL}:generateContent?key=${API_KEY}`;
+
+    // DOM Elements
+    const textInput = document.getElementById('text-input');
+    const charCount = document.getElementById('char-count');
+    const clearBtn = document.getElementById('clear-btn');
+    const copyBtn = document.getElementById('copy-btn');
+    const generateBtn = document.getElementById('generate-btn');
+    const recapPromptInput = document.getElementById('recap-prompt-input');
+    const generateRecapBtn = document.getElementById('generate-recap-btn');
+    const videoFileInput = document.getElementById('video-file-input');
+    const videoFileLabel = document.getElementById('video-file-label');
+    
+    const progressContainer = document.getElementById('progress-container');
+    const progressBar = document.getElementById('progress-bar');
+    const progressStatus = document.getElementById('progress-status');
+    const progressPercent = document.getElementById('progress-percent');
+    
+    const emptyAudioState = document.getElementById('empty-audio-state');
+    const audioPlayerWrapper = document.getElementById('audio-player-wrapper');
+    const mainAudioPlayer = document.getElementById('main-audio-player');
+    const downloadAudioBtn = document.getElementById('download-audio-btn');
+    const selectedVoiceDisplay = document.getElementById('selected-voice-display');
+    const statusBadge = document.getElementById('status-badge');
+
+    // Handle Video File Selection Display
+    let selectedVideoBase64 = null;
+    let selectedVideoMime = null;
+
+    videoFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.size > 20 * 1024 * 1024) {
+          showToast("Video ဖိုင်ဆိုဒ် 20MB အောက် ရွေးချယ်ပေးပါ (သို့မဟုတ် ဖိုင်အသေးအဖြစ် ကွန်ဗာ့တ်လုပ်ပေးပါ)။");
+          videoFileInput.value = '';
+          return;
+        }
+        videoFileLabel.textContent = `${file.name} (${(file.size / (1024 * 1024)).toFixed(1)} MB)`;
+        
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const base64Data = evt.target.result.split(',')[1];
+          selectedVideoBase64 = base64Data;
+          selectedVideoMime = file.type || "video/mp4";
+        };
+        reader.readAsDataURL(file);
+      } else {
+        videoFileLabel.textContent = "Video ဖိုင်ရွေးချယ်ပါ (.mp4, .webm, .mov)...";
+        selectedVideoBase64 = null;
+        selectedVideoMime = null;
+      }
+    });
+
+    // Update Character Counter
+    textInput.addEventListener('input', () => {
+      const count = textInput.value.length;
+      charCount.textContent = `${count.toLocaleString('my-MM')} စာလုံး`;
+    });
+
+    // Clear Textarea
+    clearBtn.addEventListener('click', () => {
+      textInput.value = '';
+      charCount.textContent = '0 စာလုံး';
+      textInput.focus();
+    });
+
+    // Easy Clipboard Copy Button Implementation
+    copyBtn.addEventListener('click', () => {
+      if (!textInput.value.trim()) {
+        showToast("ကူးယူရန် စာသားမရှိပါ!");
+        return;
+      }
+      textInput.select();
+      document.execCommand('copy');
+      
+      const originalText = copyBtn.querySelector('span').textContent;
+      copyBtn.querySelector('span').textContent = "ကူးယူပြီးပါပြီ!";
+      copyBtn.classList.add('text-emerald-400');
+      setTimeout(() => {
+        copyBtn.querySelector('span').textContent = originalText;
+        copyBtn.classList.remove('text-emerald-400');
+      }, 2000);
+    });
+
+    // AI Movie Recap Script Generation Logic (Multimodal Video Support)
+    generateRecapBtn.addEventListener('click', async () => {
+      const promptNote = recapPromptInput.value.trim();
+
+      if (!selectedVideoBase64 && !promptNote) {
+        showToast("ကျေးဇူးပြု၍ Video ဖိုင် ထည့်သွင်းပေးပါ သို့မဟုတ် ဇာတ်လမ်း မှတ်စု ရိုက်ထည့်ပေးပါ။");
+        return;
+      }
+
+      generateRecapBtn.disabled = true;
+      generateRecapBtn.querySelector('span').textContent = selectedVideoBase64 ? "Video ကို သုံးသပ်နေသည်..." : "ရေးသားနေသည်...";
+
+      const systemPrompt = `You are an expert movie recap storyteller and scriptwriter for YouTube and TikTok. 
+Write a captivating, conversational, engaging, and highly natural Burmese Movie Recap script based on the user's video or storyline notes. 
+Rules:
+- DO NOT use overly formal bookish Burmese. Use natural spoken Burmese style suitable for video narrators.
+- Keep the sentences smooth, easy to listen to, and full of natural pause markers like (။) and (၊).
+- Do not include scene markers like [Scene 1] or visual cues, ONLY output the narrator's spoken lines so it can directly be turned into Text-to-Speech audio.
+- Write a detailed script covering the key events.`;
+
+      const parts = [];
+      if (selectedVideoBase64) {
+        parts.push({
+          inlineData: {
+            mimeType: selectedVideoMime,
+            data: selectedVideoBase64
+          }
+        });
+      }
+      
+      const userTextPrompt = selectedVideoBase64 
+        ? `Analyze this video content and write a complete, natural Burmese movie recap script for it. ${promptNote ? "Note: " + promptNote : ""}`
+        : `Write a complete movie recap script for this story:\n${promptNote}`;
+
+      parts.push({ text: userTextPrompt });
+
+      const payload = {
+        contents: [{ role: "user", parts: parts }],
+        systemInstruction: { parts: [{ text: systemPrompt }] }
+      };
+
+      try {
+        const response = await fetch(TEXT_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error("Video သုံးသပ်ပြီး AI Script ရေးသားရာတွင် Error ဖြစ်ပေါ်ခဲ့ပါသည်");
+
+        const data = await response.json();
+        const generatedScript = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (generatedScript) {
+          textInput.value = generatedScript.trim();
+          charCount.textContent = `${generatedScript.length.toLocaleString('my-MM')} စာလုံး`;
+          showToast("Video မှ Movie Recap စာမူ ရေးသားပြီးပါပြီ! အောက်ပါ 'အသံဖိုင် ဖန်တီးပါ' ခလုတ်ကို နှိပ်၍ အသံပြောင်းနိုင်ပါပြီ။");
+        } else {
+          throw new Error("AI ထံမှ စာသား မရရှိပါ");
+        }
+      } catch (err) {
+        console.error(err);
+        showToast(`အမှားရှိပါသည်: ${err.message}`);
+      } finally {
+        generateRecapBtn.disabled = false;
+        generateRecapBtn.querySelector('span').textContent = "Recap စာမူ ရေးပေးပါ";
+      }
+    });
+
+    // Smart Chunking Function optimized for 2000+ long texts (Sentence & Boundary Aware)
+    function splitTextIntoChunks(text, maxLength = 600) {
+      if (!text || text.trim().length === 0) return [];
+      
+      const cleanText = text.trim();
+      if (cleanText.length <= maxLength) return [cleanText];
+
+      const chunks = [];
+      // Split primarily by Myanmar full stop (။), paragraph breaks, quotes, or standard punctuation
+      const sentences = cleanText.split(/(?<=[။\n\?!'"])/g);
+      
+      let currentChunk = "";
+
+      for (let sentence of sentences) {
+        if ((currentChunk + sentence).length <= maxLength) {
+          currentChunk += sentence;
+        } else {
+          if (currentChunk.trim().length > 0) {
+            chunks.push(currentChunk.trim());
+          }
+          if (sentence.length > maxLength) {
+            // Split by space/comma if single sentence is exceptionally long
+            let words = sentence.split(/(?<=[၊\s])/g);
+            let subChunk = "";
+            for (let word of words) {
+              if ((subChunk + word).length <= maxLength) {
+                subChunk += word;
+              } else {
+                if (subChunk.trim()) chunks.push(subChunk.trim());
+                subChunk = word;
+              }
+            }
+            if (subChunk.trim()) currentChunk = subChunk;
+            else currentChunk = "";
+          } else {
+            currentChunk = sentence;
+          }
+        }
+      }
+      if (currentChunk.trim().length > 0) {
+        chunks.push(currentChunk.trim());
+      }
+
+      return chunks;
+    }
+
+    // Convert Base64 string to ArrayBuffer
+    function base64ToArrayBuffer(base64) {
+      const binaryString = window.atob(base64);
+      const len = binaryString.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      return bytes.buffer;
+    }
+
+    // Convert raw PCM16 Audio to WAV Container Blob
+    function pcmToWav(pcm16Array, sampleRate = 24000) {
+      const numChannels = 1;
+      const bitsPerSample = 16;
+      const byteRate = (sampleRate * numChannels * bitsPerSample) / 8;
+      const blockAlign = (numChannels * bitsPerSample) / 8;
+      const dataSize = pcm16Array.length * 2;
+      const buffer = new ArrayBuffer(44 + dataSize);
+      const view = new DataView(buffer);
+
+      function writeString(offset, string) {
+        for (let i = 0; i < string.length; i++) {
+          view.setUint8(offset + i, string.charCodeAt(i));
+        }
+      }
+
+      /* RIFF identifier */
+      writeString(0, 'RIFF');
+      /* RIFF chunk length */
+      view.setUint32(4, 36 + dataSize, true);
+      /* RIFF type */
+      writeString(8, 'WAVE');
+      /* format chunk identifier */
+      writeString(12, 'fmt ');
+      /* format chunk length */
+      view.setUint32(16, 16, true);
+      /* sample format (1 = PCM) */
+      view.setUint16(20, 1, true);
+      /* channel count */
+      view.setUint16(22, numChannels, true);
+      /* sample rate */
+      view.setUint32(24, sampleRate, true);
+      /* byte rate */
+      view.setUint32(28, byteRate, true);
+      /* block align */
+      view.setUint16(32, blockAlign, true);
+      /* bits per sample */
+      view.setUint16(34, bitsPerSample, true);
+      /* data chunk identifier */
+      writeString(36, 'data');
+      /* data chunk length */
+      view.setUint32(40, dataSize, true);
+
+      // Write PCM Samples
+      let offset = 44;
+      for (let i = 0; i < pcm16Array.length; i++, offset += 2) {
+        view.setInt16(offset, pcm16Array[i], true);
+      }
+
+      return new Blob([buffer], { type: 'audio/wav' });
+    }
+
+    // Call Gemini 2.5 TTS API with Exponential Backoff
+    async function fetchSingleAudioChunk(textChunk, voiceName, toneStyle, retries = 3, delay = 1000) {
+      // Clean up text prompt for Gemini TTS
+      const cleanPrompt = `Read the following Burmese text clearly in a ${toneStyle} voice:\n\n${textChunk}`;
+      
+      const payload = {
+        contents: [{
+          parts: [{ text: cleanPrompt }]
+        }],
+        generationConfig: {
+          responseModalities: ["AUDIO"],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: { voiceName: voiceName }
+            }
+          }
+        }
+      };
+
+      let lastError = null;
+      for (let attempt = 0; attempt < retries; attempt++) {
+        try {
+          const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (!res.ok) {
+            const errText = await res.text();
+            try {
+              const parsedErr = JSON.parse(errText);
+              lastError = parsedErr?.error?.message || `HTTP ${res.status}`;
+            } catch (e) {
+              lastError = `HTTP ${res.status}`;
+            }
+            throw new Error(lastError);
+          }
+
+          const data = await res.json();
+          const part = data?.candidates?.[0]?.content?.parts?.[0];
+          
+          if (part && part.inlineData && part.inlineData.data) {
+            const mimeType = part.inlineData.mimeType || "";
+            let sampleRate = 24000;
+            const rateMatch = mimeType.match(/rate=(\d+)/);
+            if (rateMatch && rateMatch[1]) {
+              sampleRate = parseInt(rateMatch[1], 10);
+            }
+
+            const rawBuffer = base64ToArrayBuffer(part.inlineData.data);
+            const pcm16Data = new Int16Array(rawBuffer);
+            return { pcm16Data, sampleRate };
+          } else {
+            throw new Error("API က အသံဖိုင်ဒေတာ ပေးပို့ခြင်းမရှိပါ");
+          }
+        } catch (err) {
+          lastError = err.message || "Network Error";
+          if (attempt === retries - 1) throw new Error(lastError);
+          await new Promise(r => setTimeout(r, delay * Math.pow(2, attempt)));
+        }
+      }
+    }
+
+    // Helper to show custom toast message
+    function showToast(msg) {
+      const toast = document.getElementById('toast-message');
+      const toastText = document.getElementById('toast-text');
+      toastText.textContent = msg;
+      toast.classList.remove('hidden');
+    }
+
+    // Main Audio Generation Process (Optimized for 2000+ Words Chunking)
+    generateBtn.addEventListener('click', async () => {
+      document.getElementById('toast-message').classList.add('hidden');
+      const rawText = textInput.value.trim();
+      if (!rawText) {
+        showToast("ကျေးဇူးပြု၍ ဖတ်ပြစေချင်သော မြန်မာစာများကို ထည့်သွင်းပေးပါ။");
+        return;
+      }
+
+      // Get Selected Voice & Tone
+      const selectedVoiceInput = document.querySelector('input[name="voice"]:checked');
+      const voiceName = selectedVoiceInput ? selectedVoiceInput.value : "Vindemiatrix";
+      const voiceDisplayName = selectedVoiceInput ? selectedVoiceInput.getAttribute('data-name') : "နီလာ";
+      const toneStyle = document.getElementById('reading-tone').value;
+
+      // Disable UI during generation
+      generateBtn.disabled = true;
+      generateBtn.querySelector('span').textContent = 'ဖန်တီးနေပါသည်...';
+      
+      progressContainer.classList.remove('hidden');
+      progressBar.style.width = '0%';
+      progressPercent.textContent = '0%';
+      progressStatus.textContent = 'စာပိုဒ်ရှည်များကို အပိုင်းများ ခွဲခြားပြင်ဆင်နေပါသည်...';
+
+      statusBadge.classList.remove('hidden');
+      statusBadge.textContent = 'လုပ်ဆောင်နေဆဲ';
+      statusBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30';
+
+      try {
+        // Chunk Text into 600-character optimal limits for 2000+ words handling
+        const chunks = splitTextIntoChunks(rawText, 600);
+        const allPcmChunks = new Array(chunks.length);
+        let detectedSampleRate = 24000;
+        let completedCount = 0;
+
+        // Process in sequential/managed batches to avoid API limits while maintaining speed
+        const BATCH_SIZE = 2;
+        for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
+          const batchIndices = [];
+          for (let j = i; j < Math.min(i + BATCH_SIZE, chunks.length); j++) {
+            batchIndices.push(j);
+          }
+
+          const results = await Promise.all(
+            batchIndices.map(async (idx) => {
+              const res = await fetchSingleAudioChunk(chunks[idx], voiceName, toneStyle);
+              completedCount++;
+              const currentPercent = Math.round((completedCount / chunks.length) * 100);
+              progressBar.style.width = `${currentPercent}%`;
+              progressPercent.textContent = `${currentPercent}%`;
+              progressStatus.textContent = `အသံပြောင်းလဲနေပါသည် (${completedCount}/${chunks.length} အပိုင်း ပြီးစီး)...`;
+              return { idx, res };
+            })
+          );
+
+          for (const { idx, res } of results) {
+            allPcmChunks[idx] = res.pcm16Data;
+            if (res.sampleRate) detectedSampleRate = res.sampleRate;
+          }
+        }
+
+        // Finish Progress
+        progressBar.style.width = '100%';
+        progressPercent.textContent = '100%';
+        progressStatus.textContent = 'အသံဖိုင် ပေါင်းစပ်ခြင်း ပြီးမြောက်ပါပြီ!';
+
+        // Merge all PCM16 Array Chunks together
+        const totalSamples = allPcmChunks.reduce((acc, chunk) => acc + (chunk ? chunk.length : 0), 0);
+        const mergedPcm = new Int16Array(totalSamples);
+        let offset = 0;
+        for (const chunk of allPcmChunks) {
+          if (chunk) {
+            mergedPcm.set(chunk, offset);
+            offset += chunk.length;
+          }
+        }
+
+        // Convert merged PCM into playable WAV Blob
+        const wavBlob = pcmToWav(mergedPcm, detectedSampleRate);
+        const audioUrl = URL.createObjectURL(wavBlob);
+
+        // Update Audio Player
+        mainAudioPlayer.src = audioUrl;
+        downloadAudioBtn.href = audioUrl;
+        downloadAudioBtn.download = `myanmar_tts_${voiceName}_${Date.now()}.wav`;
+        selectedVoiceDisplay.textContent = voiceDisplayName;
+
+        // Show Audio Player Container
+        emptyAudioState.classList.add('hidden');
+        audioPlayerWrapper.classList.remove('hidden');
+
+        statusBadge.textContent = 'ပြီးစီးပါပြီ';
+        statusBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+
+        // Auto play audio
+        mainAudioPlayer.play().catch(() => {});
+
+      } catch (err) {
+        console.error(err);
+        showToast(`အသံဖိုင် ဖန်တီးရာတွင် အမှားဖြစ်သွားပါသည်: ${err.message || 'API Error'}`);
+        progressStatus.textContent = 'မအောင်မြင်ပါ။ ပြန်လည်ကြိုးစားပါ။';
+        statusBadge.textContent = 'အမှားရှိသည်';
+        statusBadge.className = 'text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30';
+      } finally {
+        generateBtn.disabled = false;
+        generateBtn.querySelector('span').textContent = 'အသံဖိုင် ဖန်တီးပါ';
+      }
+    });
+  </script>
+</body>
+</html>
+```
